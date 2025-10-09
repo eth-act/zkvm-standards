@@ -134,13 +134,14 @@ int zkvm_bn254_pairing(const uint8_t* input, size_t input_len);
  * Implements the BLAKE2 compression function F.
  *
  * @param rounds Number of rounds (uint32, big-endian)
- TODO: so this being in big endian was taken from the EIP. We don't need to match it but need to double check why
  * @param h State vector (64 bytes: 8 × uint64 little-endian)
  * @param m Message block (128 bytes: 16 × uint64 little-endian)
  * @param t Offset counters (16 bytes: 2 × uint64 little-endian)
  * @param f Final block indicator (1 byte: 0x00 or 0x01)
  * @param output Output state vector (64 bytes)
  * @return 0 on success, -1 on error
+ *
+ * @remark The use of big-endian encoding for the rounds parameter matches the specification in EIP-152. 
  */
 int zkvm_blake2f(uint32_t rounds,
                  const uint8_t h[64],
