@@ -27,7 +27,7 @@ extern "C" {
  *
  * @param data Pointer to input data
  * @param len Length of input data in bytes
- * @param output Pointer to 32-byte output buffer
+ * @param[out] output Pointer to 32-byte output buffer
  */
 void zkvm_keccak256(const uint8_t* data, size_t len, uint8_t output[32]);
 
@@ -44,7 +44,7 @@ void zkvm_keccak256(const uint8_t* data, size_t len, uint8_t output[32]);
  * @param msg 32-byte message hash
  * @param sig 64-byte signature (r || s)
  * @param recid Recovery ID
- * @param output Pointer to 32-byte output buffer (Keccak256 of pubkey)
+ * @param[out] output Pointer to 32-byte output buffer (Keccak256 of pubkey)
  * @return 0 on success, -1 on error
  */
 int zkvm_secp256k1_ecrecover(const uint8_t msg[32],
@@ -57,7 +57,7 @@ int zkvm_secp256k1_ecrecover(const uint8_t msg[32],
  *
  * @param data Pointer to input data
  * @param len Length of input data in bytes
- * @param output Pointer to 32-byte output buffer
+ * @param[out] output Pointer to 32-byte output buffer
  */
 void zkvm_sha256(const uint8_t* data, size_t len, uint8_t output[32]);
 
@@ -66,7 +66,7 @@ void zkvm_sha256(const uint8_t* data, size_t len, uint8_t output[32]);
  *
  * @param data Pointer to input data
  * @param len Length of input data in bytes
- * @param output Pointer to 20-byte output buffer
+ * @param[out] output Pointer to 20-byte output buffer
  */
 void zkvm_ripemd160(const uint8_t* data, size_t len, uint8_t output[20]);
 
@@ -86,7 +86,7 @@ void zkvm_ripemd160(const uint8_t* data, size_t len, uint8_t output[20]);
  * @param exp_len Length of exponent in bytes
  * @param modulus Pointer to modulus bytes
  * @param mod_len Length of modulus in bytes
- * @param output Pointer to output buffer (must be exactly mod_len bytes)
+ * @param[out] output Pointer to output buffer (must be exactly mod_len bytes)
  * @return 0 on success, -1 on error
  */
 int zkvm_modexp(const uint8_t* base, size_t base_len,
@@ -99,7 +99,7 @@ int zkvm_modexp(const uint8_t* base, size_t base_len,
  *
  * @param p1 First point (64 bytes: x || y)
  * @param p2 Second point (64 bytes: x || y)
- * @param result Output point (64 bytes: x || y)
+ * @param[out] result Output point (64 bytes: x || y)
  * @return 0 on success, -1 on error
  */
 int zkvm_bn254_g1_add(const uint8_t p1[64], const uint8_t p2[64],
@@ -110,7 +110,7 @@ int zkvm_bn254_g1_add(const uint8_t p1[64], const uint8_t p2[64],
  *
  * @param point Input point (64 bytes: x || y)
  * @param scalar 32-byte scalar
- * @param result Output point (64 bytes: x || y)
+ * @param[out] result Output point (64 bytes: x || y)
  * @return 0 on success, -1 on error
  */
 int zkvm_bn254_g1_mul(const uint8_t point[64], const uint8_t scalar[32],
@@ -137,10 +137,10 @@ int zkvm_bn254_pairing(const uint8_t* input, size_t input_len);
  * @param m Message block (128 bytes: 16 × uint64 little-endian)
  * @param t Offset counters (16 bytes: 2 × uint64 little-endian)
  * @param f Final block indicator (1 byte: 0x00 or 0x01)
- * @param output Output state vector (64 bytes)
+ * @param[out] output Output state vector (64 bytes)
  * @return 0 on success, -1 on error
  *
- * @remark The use of big-endian encoding for the rounds parameter matches the specification in EIP-152. 
+ * @remark The use of big-endian encoding for the rounds parameter matches the specification in EIP-152.
  */
 int zkvm_blake2f(uint32_t rounds,
                  const uint8_t h[64],
@@ -170,7 +170,7 @@ int zkvm_kzg_point_eval(const uint8_t commitment[48],
  *
  * @param p1 First G1 point (128 bytes: Fp x, Fp y)
  * @param p2 Second G1 point (128 bytes: Fp x, Fp y)
- * @param result Output G1 point (128 bytes)
+ * @param[out] result Output G1 point (128 bytes)
  * @return 0 on success, -1 on error
  */
 int zkvm_bls12_g1_add(const uint8_t p1[128], const uint8_t p2[128],
@@ -181,7 +181,7 @@ int zkvm_bls12_g1_add(const uint8_t p1[128], const uint8_t p2[128],
  *
  * @param pairs Interleaved points and scalars (128 + 32 bytes per pair)
  * @param num_pairs Number of point-scalar pairs
- * @param result Output G1 point (128 bytes)
+ * @param[out] result Output G1 point (128 bytes)
  * @return 0 on success, -1 on error
  */
 int zkvm_bls12_g1_msm(const uint8_t* pairs, const size_t num_pairs,
@@ -192,7 +192,7 @@ int zkvm_bls12_g1_msm(const uint8_t* pairs, const size_t num_pairs,
  *
  * @param p1 First G2 point (256 bytes: Fp2 x, Fp2 y)
  * @param p2 Second G2 point (256 bytes: Fp2 x, Fp2 y)
- * @param result Output G2 point (256 bytes)
+ * @param[out] result Output G2 point (256 bytes)
  * @return 0 on success, -1 on error
  */
 int zkvm_bls12_g2_add(const uint8_t p1[256], const uint8_t p2[256],
@@ -203,7 +203,7 @@ int zkvm_bls12_g2_add(const uint8_t p1[256], const uint8_t p2[256],
  *
  * @param pairs Interleaved points and scalars (256 + 32 bytes per pair)
  * @param num_pairs Number of point-scalar pairs
- * @param result Output G2 point (256 bytes)
+ * @param[out] result Output G2 point (256 bytes)
  * @return 0 on success, -1 on error
  */
 int zkvm_bls12_g2_msm(const uint8_t* pairs, const size_t num_pairs,
@@ -222,7 +222,7 @@ int zkvm_bls12_pairing(const uint8_t* pairs, const size_t num_pairs);
  * BLS12-381 map Fp to G1 (Precompile 0x10, EIP-2537)
  *
  * @param field_element 64-byte Fp element
- * @param result Output G1 point (128 bytes)
+ * @param[out] result Output G1 point (128 bytes)
  * @return 0 on success, -1 on error
  */
 int zkvm_bls12_map_fp_to_g1(const uint8_t field_element[64],
@@ -232,7 +232,7 @@ int zkvm_bls12_map_fp_to_g1(const uint8_t field_element[64],
  * BLS12-381 map Fp2 to G2 (Precompile 0x11, EIP-2537)
  *
  * @param field_element 128-byte Fp2 element
- * @param result Output G2 point (256 bytes)
+ * @param[out] result Output G2 point (256 bytes)
  * @return 0 on success, -1 on error
  */
 int zkvm_bls12_map_fp2_to_g2(const uint8_t field_element[128],
