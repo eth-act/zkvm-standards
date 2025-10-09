@@ -27,8 +27,7 @@ extern "C" {
  */
 typedef enum {
     ZKVM_ERROR = -1,            /* Operation failed */
-    ZKVM_SUCCESS = 0,           /* Operation completed successfully */
-    ZKVM_VERIFY_FAILURE = 1     /* Verification/check failed */
+    ZKVM_SUCCESS = 0            /* Operation completed successfully */
 } zkvm_status;
 
 /* ============================================================================
@@ -105,11 +104,13 @@ void zkvm_keccak256(const uint8_t* data, const size_t len, uint8_t output[ZKVM_H
  * @param msg ZKVM_SECP256K1_HASH_LEN-byte message hash
  * @param sig ZKVM_SECP256K1_SIG_LEN-byte signature (r || s)
  * @param pubkey ZKVM_SECP256K1_PUBKEY_LEN-byte uncompressed public key (x || y)
- * @return ZKVM_SUCCESS if signature is valid, ZKVM_VERIFY_FAILURE if invalid, ZKVM_ERROR on error
+ * @param[out] verified Pointer to bool indicating if signature is valid
+ * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
  */
 zkvm_status zkvm_secp256k1_verify(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
                                   const uint8_t sig[ZKVM_SECP256K1_SIG_LEN],
-                                  const uint8_t pubkey[ZKVM_SECP256K1_PUBKEY_LEN]);
+                                  const uint8_t pubkey[ZKVM_SECP256K1_PUBKEY_LEN],
+                                  bool* verified);
 
 /* ============================================================================
  * Ethereum Precompiles
@@ -229,10 +230,12 @@ zkvm_status zkvm_bn254_g1_mul(const uint8_t point[ZKVM_BN254_G1_POINT_LEN],
  *
  * @param pairs Encoded input points (ZKVM_BN254_PAIRING_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point pairs
- * @return ZKVM_SUCCESS if pairing check passes, ZKVM_VERIFY_FAILURE if pairing check fails, ZKVM_ERROR on error
+ * @param[out] verified Pointer to bool indicating if pairing check passes
+ * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
  */
 zkvm_status zkvm_bn254_pairing(const zkvm_bn254_pairing_pair* pairs,
-                               const size_t num_pairs);
+                               const size_t num_pairs,
+                               bool* verified);
 
 /**
  * BLAKE2f compression function
@@ -273,12 +276,14 @@ zkvm_status zkvm_blake2f(const uint32_t rounds,
  * @param z ZKVM_KZG_FIELD_ELEMENT_LEN-byte evaluation point
  * @param y ZKVM_KZG_FIELD_ELEMENT_LEN-byte claimed evaluation
  * @param proof ZKVM_KZG_PROOF_LEN-byte KZG proof
- * @return ZKVM_SUCCESS if proof is valid, ZKVM_VERIFY_FAILURE if proof is invalid, ZKVM_ERROR on error
+ * @param[out] verified Pointer to bool indicating if proof is valid
+ * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
  */
 zkvm_status zkvm_kzg_point_eval(const uint8_t commitment[ZKVM_KZG_COMMITMENT_LEN],
                                 const uint8_t z[ZKVM_KZG_FIELD_ELEMENT_LEN],
                                 const uint8_t y[ZKVM_KZG_FIELD_ELEMENT_LEN],
-                                const uint8_t proof[ZKVM_KZG_PROOF_LEN]);
+                                const uint8_t proof[ZKVM_KZG_PROOF_LEN],
+                                bool* verified);
 
 /**
  * BLS12-381 G1 point addition
@@ -348,10 +353,12 @@ zkvm_status zkvm_bls12_g2_msm(const zkvm_bls12_381_g2_msm_pair* pairs,
  *
  * @param pairs G1 and G2 point pairs (ZKVM_BLS12_381_PAIRING_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point pairs
- * @return ZKVM_SUCCESS if pairing check passes, ZKVM_VERIFY_FAILURE if pairing check fails, ZKVM_ERROR on error
+ * @param[out] verified Pointer to bool indicating if pairing check passes
+ * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
  */
 zkvm_status zkvm_bls12_pairing(const zkvm_bls12_381_pairing_pair* pairs,
-                               const size_t num_pairs);
+                               const size_t num_pairs,
+                               bool* verified);
 
 /**
  * BLS12-381 map Fp to G1
@@ -388,11 +395,13 @@ zkvm_status zkvm_bls12_map_fp2_to_g2(const uint8_t field_element[ZKVM_BLS12_381_
  * @param msg ZKVM_SECP256R1_HASH_LEN-byte message hash
  * @param sig ZKVM_SECP256R1_SIG_LEN-byte signature (r || s)
  * @param pubkey ZKVM_SECP256R1_PUBKEY_LEN-byte uncompressed public key (x || y)
- * @return ZKVM_SUCCESS if signature is valid, ZKVM_VERIFY_FAILURE if invalid, ZKVM_ERROR on error
+ * @param[out] verified Pointer to bool indicating if signature is valid
+ * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
  */
 zkvm_status zkvm_secp256r1_verify(const uint8_t msg[ZKVM_SECP256R1_HASH_LEN],
                                   const uint8_t sig[ZKVM_SECP256R1_SIG_LEN],
-                                  const uint8_t pubkey[ZKVM_SECP256R1_PUBKEY_LEN]);
+                                  const uint8_t pubkey[ZKVM_SECP256R1_PUBKEY_LEN],
+                                  bool* verified);
 
 #ifdef __cplusplus
 }
