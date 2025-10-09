@@ -101,6 +101,9 @@ zkvm_status zkvm_secp256k1_verify(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
 
 /* ============================================================================
  * Ethereum Precompiles
+ *
+ * Note: These methods may not have the same API as the EVM precompiles because
+ * in most cases, we care about the raw underlying cryptographic primitive.
  * ============================================================================ */
 
 /**
