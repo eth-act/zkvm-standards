@@ -66,7 +66,7 @@ extern "C" {
  * @param len Length of input data in bytes
  * @param[out] output Pointer to ZKVM_HASH_KECCAK256_LEN-byte output buffer
  */
-void zkvm_keccak256(const uint8_t* data, size_t len, uint8_t output[ZKVM_HASH_KECCAK256_LEN]);
+void zkvm_keccak256(const uint8_t* data, const size_t len, uint8_t output[ZKVM_HASH_KECCAK256_LEN]);
 
 /* ============================================================================
  * Ethereum Precompiles
@@ -98,7 +98,7 @@ int zkvm_secp256k1_ecrecover(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
  * @param len Length of input data in bytes
  * @param[out] output Pointer to ZKVM_HASH_SHA256_LEN-byte output buffer
  */
-void zkvm_sha256(const uint8_t* data, size_t len, uint8_t output[ZKVM_HASH_SHA256_LEN]);
+void zkvm_sha256(const uint8_t* data, const size_t len, uint8_t output[ZKVM_HASH_SHA256_LEN]);
 
 /**
  * Compute RIPEMD-160 hash (Precompile 0x03)
@@ -107,7 +107,7 @@ void zkvm_sha256(const uint8_t* data, size_t len, uint8_t output[ZKVM_HASH_SHA25
  * @param len Length of input data in bytes
  * @param[out] output Pointer to ZKVM_HASH_RIPEMD160_LEN-byte output buffer
  */
-void zkvm_ripemd160(const uint8_t* data, size_t len, uint8_t output[ZKVM_HASH_RIPEMD160_LEN]);
+void zkvm_ripemd160(const uint8_t* data, const size_t len, uint8_t output[ZKVM_HASH_RIPEMD160_LEN]);
 
 /**
  * The Identity/datacopy function (Precompile 0x04) is not provided as it
@@ -128,9 +128,9 @@ void zkvm_ripemd160(const uint8_t* data, size_t len, uint8_t output[ZKVM_HASH_RI
  * @param[out] output Pointer to output buffer (must be exactly mod_len bytes)
  * @return 0 on success, -1 on error
  */
-int zkvm_modexp(const uint8_t* base, size_t base_len,
-                const uint8_t* exp, size_t exp_len,
-                const uint8_t* modulus, size_t mod_len,
+int zkvm_modexp(const uint8_t* base, const size_t base_len,
+                const uint8_t* exp, const size_t exp_len,
+                const uint8_t* modulus, const size_t mod_len,
                 uint8_t* output);
 
 /**
@@ -166,7 +166,7 @@ int zkvm_bn254_g1_mul(const uint8_t point[ZKVM_BN254_G1_POINT_LEN],
  * @param input_len Length of input in bytes (must be multiple of ZKVM_BN254_G1_POINT_LEN + ZKVM_BN254_G2_POINT_LEN)
  * @return 1 if pairing check passes, 0 if pairing check fails, -1 on error
  */
-int zkvm_bn254_pairing(const uint8_t* input, size_t input_len);
+int zkvm_bn254_pairing(const uint8_t* input, const size_t input_len);
 
 /**
  * BLAKE2f compression function (Precompile 0x09, EIP-152)
@@ -183,11 +183,11 @@ int zkvm_bn254_pairing(const uint8_t* input, size_t input_len);
  *
  * @remark The use of big-endian encoding for the rounds parameter matches the specification in EIP-152.
  */
-int zkvm_blake2f(uint32_t rounds,
+int zkvm_blake2f(const uint32_t rounds,
                  const uint8_t h[ZKVM_BLAKE2F_STATE_LEN],
                  const uint8_t m[ZKVM_BLAKE2F_MSG_LEN],
                  const uint8_t t[ZKVM_BLAKE2F_OFFSET_LEN],
-                 uint8_t f,
+                 const uint8_t f,
                  uint8_t output[ZKVM_BLAKE2F_STATE_LEN]);
 
 /**
