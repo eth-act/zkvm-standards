@@ -10,4 +10,4 @@ Note: The interface is based on Ethereum precompiles but simplified to expose ra
 
 ## Header File
 
-See [`zkvm_accelerators.h`](./zkvm_accelerators.h) for the complete interface that a guest program can use. This functions in the header file will be implemented by the appropriate zkVM.
+See [`zkvm_accelerators.h`](./zkvm_accelerators.h) for the complete interface that a guest program can use. The functions in the header file will be implemented by the appropriate zkVM.
