@@ -220,22 +220,24 @@ zkvm_status zkvm_bn254_pairing(const zkvm_bn254_pairing_pair* pairs,
  *
  * Implements the BLAKE2 compression function F.
  *
+ * BLAKE2f is highly performance-sensitive and often used in tight loops for hashing.
+ * The in-place update design minimizes memory allocations and copies.
+ *
  * @param rounds Number of rounds (uint32, big-endian)
- * @param h State vector (ZKVM_BLAKE2F_STATE_LEN bytes: 8 × uint64 little-endian)
+ * @param[in,out] h State vector (ZKVM_BLAKE2F_STATE_LEN bytes: 8 × uint64 little-endian).
+ *                   Input: initial state. Output: updated state after compression.
  * @param m Message block (ZKVM_BLAKE2F_MSG_LEN bytes: 16 × uint64 little-endian)
  * @param t Offset counters (ZKVM_BLAKE2F_OFFSET_LEN bytes: 2 × uint64 little-endian)
  * @param f Final block indicator (1 byte: 0x00 or 0x01)
- * @param[out] output Output state vector (ZKVM_BLAKE2F_STATE_LEN bytes)
  * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
  *
  * @remark The use of big-endian encoding for the rounds parameter matches the specification in EIP-152.
  */
 zkvm_status zkvm_blake2f(const uint32_t rounds,
-                         const uint8_t h[ZKVM_BLAKE2F_STATE_LEN],
+                         uint8_t h[ZKVM_BLAKE2F_STATE_LEN],
                          const uint8_t m[ZKVM_BLAKE2F_MSG_LEN],
                          const uint8_t t[ZKVM_BLAKE2F_OFFSET_LEN],
-                         const uint8_t f,
-                         uint8_t output[ZKVM_BLAKE2F_STATE_LEN]);
+                         const uint8_t f);
 
 /**
  * Point evaluation precompile (Precompile 0x0a, EIP-4844)
