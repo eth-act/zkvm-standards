@@ -72,16 +72,9 @@ void zkvm_sha256(const uint8_t* data, size_t len, uint8_t output[32]);
 void zkvm_ripemd160(const uint8_t* data, size_t len, uint8_t output[32]);
 
 /**
- * Identity/datacopy function (Precompile 0x04)
- *
- * Copies input data to output.
- *
- * @param data Pointer to input data
- * @param len Length of data in bytes
- * @param output Pointer to output buffer (must be len bytes)
- TODO: Remove during PR review, just leaving it here so that we can reference it in history
+ * The Identity/datacopy function (Precompile 0x04) is not provided as it
+   can be implemented in the guest program efficiently.
  */
-void zkvm_identity(const uint8_t* data, size_t len, uint8_t* output);
 
 /**
  * Modular exponentiation (Precompile 0x05)
