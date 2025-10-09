@@ -31,6 +31,20 @@ extern "C" {
  */
 void zkvm_keccak256(const uint8_t* data, size_t len, uint8_t output[32]);
 
+/**
+ * secp256k1 signature verification
+ *
+ * Verifies an ECDSA signature on the secp256k1 curve.
+ *
+ * @param msg 32-byte message hash
+ * @param sig 64-byte signature (r || s)
+ * @param pubkey 64-byte uncompressed public key (x || y)
+ * @return 1 if signature is valid, 0 if invalid, -1 on error
+ */
+int zkvm_secp256k1_verify(const uint8_t msg[32],
+                          const uint8_t sig[64],
+                          const uint8_t pubkey[64]);
+
 /* ============================================================================
  * Ethereum Precompiles
  * ============================================================================ */
