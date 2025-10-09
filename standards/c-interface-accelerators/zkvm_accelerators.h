@@ -24,10 +24,13 @@ extern "C" {
 
 /**
  * Status codes returned by zkVM accelerator functions
+ *
+ * - 0 indicates success
+ * - Non-zero indicates failure
  */
 typedef enum {
-    ZKVM_ERROR = -1,            /* Operation failed */
-    ZKVM_SUCCESS = 0            /* Operation completed successfully */
+    ZKVM_EOK = 0,               /* Success */
+    ZKVM_EFAIL = -1             /* Failure */
 } zkvm_status;
 
 /* ============================================================================
@@ -105,7 +108,7 @@ void zkvm_keccak256(const uint8_t* data, const size_t len, uint8_t output[ZKVM_H
  * @param sig ZKVM_SECP256K1_SIG_LEN-byte signature (r || s)
  * @param pubkey ZKVM_SECP256K1_PUBKEY_LEN-byte uncompressed public key (x || y)
  * @param[out] verified Pointer to bool indicating if signature is valid
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_secp256k1_verify(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
                                   const uint8_t sig[ZKVM_SECP256K1_SIG_LEN],
@@ -133,7 +136,7 @@ zkvm_status zkvm_secp256k1_verify(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
  * @param sig ZKVM_SECP256K1_SIG_LEN-byte signature (r || s)
  * @param recid Recovery ID
  * @param[out] output Pointer to ZKVM_SECP256K1_PUBKEY_LEN-byte output buffer (public key)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_secp256k1_ecrecover(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
                                      const uint8_t sig[ZKVM_SECP256K1_SIG_LEN],
@@ -183,7 +186,7 @@ void zkvm_ripemd160(const uint8_t* data, const size_t len, uint8_t output[ZKVM_H
  * @param modulus Pointer to modulus bytes
  * @param mod_len Length of modulus in bytes
  * @param[out] output Pointer to output buffer (must be exactly mod_len bytes)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_modexp(const uint8_t* base, const size_t base_len,
                         const uint8_t* exp, const size_t exp_len,
@@ -199,7 +202,7 @@ zkvm_status zkvm_modexp(const uint8_t* base, const size_t base_len,
  * @param p1 First point (ZKVM_BN254_G1_POINT_LEN bytes: x || y)
  * @param p2 Second point (ZKVM_BN254_G1_POINT_LEN bytes: x || y)
  * @param[out] result Output point (ZKVM_BN254_G1_POINT_LEN bytes: x || y)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bn254_g1_add(const uint8_t p1[ZKVM_BN254_G1_POINT_LEN],
                               const uint8_t p2[ZKVM_BN254_G1_POINT_LEN],
@@ -214,7 +217,7 @@ zkvm_status zkvm_bn254_g1_add(const uint8_t p1[ZKVM_BN254_G1_POINT_LEN],
  * @param point Input point (ZKVM_BN254_G1_POINT_LEN bytes: x || y)
  * @param scalar ZKVM_BN254_SCALAR_LEN-byte scalar
  * @param[out] result Output point (ZKVM_BN254_G1_POINT_LEN bytes: x || y)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bn254_g1_mul(const uint8_t point[ZKVM_BN254_G1_POINT_LEN],
                               const uint8_t scalar[ZKVM_BN254_SCALAR_LEN],
@@ -231,7 +234,7 @@ zkvm_status zkvm_bn254_g1_mul(const uint8_t point[ZKVM_BN254_G1_POINT_LEN],
  * @param pairs Encoded input points (ZKVM_BN254_PAIRING_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point pairs
  * @param[out] verified Pointer to bool indicating if pairing check passes
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bn254_pairing(const zkvm_bn254_pairing_pair* pairs,
                                const size_t num_pairs,
@@ -254,7 +257,7 @@ zkvm_status zkvm_bn254_pairing(const zkvm_bn254_pairing_pair* pairs,
  * @param m Message block (ZKVM_BLAKE2F_MSG_LEN bytes: 16 × uint64 little-endian)
  * @param t Offset counters (ZKVM_BLAKE2F_OFFSET_LEN bytes: 2 × uint64 little-endian)
  * @param f Final block indicator (1 byte: 0x00 or 0x01)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  *
  * @remark The use of big-endian encoding for the rounds parameter matches the specification in EIP-152.
  */
@@ -277,7 +280,7 @@ zkvm_status zkvm_blake2f(const uint32_t rounds,
  * @param y ZKVM_KZG_FIELD_ELEMENT_LEN-byte claimed evaluation
  * @param proof ZKVM_KZG_PROOF_LEN-byte KZG proof
  * @param[out] verified Pointer to bool indicating if proof is valid
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_kzg_point_eval(const uint8_t commitment[ZKVM_KZG_COMMITMENT_LEN],
                                 const uint8_t z[ZKVM_KZG_FIELD_ELEMENT_LEN],
@@ -294,7 +297,7 @@ zkvm_status zkvm_kzg_point_eval(const uint8_t commitment[ZKVM_KZG_COMMITMENT_LEN
  * @param p1 First G1 point (ZKVM_BLS12_381_G1_POINT_LEN bytes: Fp x, Fp y)
  * @param p2 Second G1 point (ZKVM_BLS12_381_G1_POINT_LEN bytes: Fp x, Fp y)
  * @param[out] result Output G1 point (ZKVM_BLS12_381_G1_POINT_LEN bytes)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bls12_g1_add(const uint8_t p1[ZKVM_BLS12_381_G1_POINT_LEN],
                               const uint8_t p2[ZKVM_BLS12_381_G1_POINT_LEN],
@@ -309,7 +312,7 @@ zkvm_status zkvm_bls12_g1_add(const uint8_t p1[ZKVM_BLS12_381_G1_POINT_LEN],
  * @param pairs Interleaved points and scalars (ZKVM_BLS12_381_G1_MSM_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point-scalar pairs
  * @param[out] result Output G1 point (ZKVM_BLS12_381_G1_POINT_LEN bytes)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bls12_g1_msm(const zkvm_bls12_381_g1_msm_pair* pairs,
                               const size_t num_pairs,
@@ -324,7 +327,7 @@ zkvm_status zkvm_bls12_g1_msm(const zkvm_bls12_381_g1_msm_pair* pairs,
  * @param p1 First G2 point (ZKVM_BLS12_381_G2_POINT_LEN bytes: Fp2 x, Fp2 y)
  * @param p2 Second G2 point (ZKVM_BLS12_381_G2_POINT_LEN bytes: Fp2 x, Fp2 y)
  * @param[out] result Output G2 point (ZKVM_BLS12_381_G2_POINT_LEN bytes)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bls12_g2_add(const uint8_t p1[ZKVM_BLS12_381_G2_POINT_LEN],
                               const uint8_t p2[ZKVM_BLS12_381_G2_POINT_LEN],
@@ -339,7 +342,7 @@ zkvm_status zkvm_bls12_g2_add(const uint8_t p1[ZKVM_BLS12_381_G2_POINT_LEN],
  * @param pairs Interleaved points and scalars (ZKVM_BLS12_381_G2_MSM_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point-scalar pairs
  * @param[out] result Output G2 point (ZKVM_BLS12_381_G2_POINT_LEN bytes)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bls12_g2_msm(const zkvm_bls12_381_g2_msm_pair* pairs,
                               const size_t num_pairs,
@@ -354,7 +357,7 @@ zkvm_status zkvm_bls12_g2_msm(const zkvm_bls12_381_g2_msm_pair* pairs,
  * @param pairs G1 and G2 point pairs (ZKVM_BLS12_381_PAIRING_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point pairs
  * @param[out] verified Pointer to bool indicating if pairing check passes
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bls12_pairing(const zkvm_bls12_381_pairing_pair* pairs,
                                const size_t num_pairs,
@@ -368,7 +371,7 @@ zkvm_status zkvm_bls12_pairing(const zkvm_bls12_381_pairing_pair* pairs,
  *
  * @param field_element ZKVM_BLS12_381_FP_LEN-byte Fp element
  * @param[out] result Output G1 point (ZKVM_BLS12_381_G1_POINT_LEN bytes)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bls12_map_fp_to_g1(const uint8_t field_element[ZKVM_BLS12_381_FP_LEN],
                                     uint8_t result[ZKVM_BLS12_381_G1_POINT_LEN]);
@@ -381,7 +384,7 @@ zkvm_status zkvm_bls12_map_fp_to_g1(const uint8_t field_element[ZKVM_BLS12_381_F
  *
  * @param field_element ZKVM_BLS12_381_FP2_LEN-byte Fp2 element
  * @param[out] result Output G2 point (ZKVM_BLS12_381_G2_POINT_LEN bytes)
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_bls12_map_fp2_to_g2(const uint8_t field_element[ZKVM_BLS12_381_FP2_LEN],
                                      uint8_t result[ZKVM_BLS12_381_G2_POINT_LEN]);
@@ -396,7 +399,7 @@ zkvm_status zkvm_bls12_map_fp2_to_g2(const uint8_t field_element[ZKVM_BLS12_381_
  * @param sig ZKVM_SECP256R1_SIG_LEN-byte signature (r || s)
  * @param pubkey ZKVM_SECP256R1_PUBKEY_LEN-byte uncompressed public key (x || y)
  * @param[out] verified Pointer to bool indicating if signature is valid
- * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
 zkvm_status zkvm_secp256r1_verify(const uint8_t msg[ZKVM_SECP256R1_HASH_LEN],
                                   const uint8_t sig[ZKVM_SECP256R1_SIG_LEN],
