@@ -11,6 +11,7 @@
 #ifndef ZKVM_ACCELERATORS_H
 #define ZKVM_ACCELERATORS_H
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
