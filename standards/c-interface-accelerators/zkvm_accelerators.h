@@ -90,14 +90,14 @@ void zkvm_keccak256(const uint8_t* data, const size_t len, uint8_t output[ZKVM_H
  *
  * Verifies an ECDSA signature on the secp256k1 curve.
  *
- * @param msg 32-byte message hash
- * @param sig 64-byte signature (r || s)
- * @param pubkey 64-byte uncompressed public key (x || y)
- * @return 1 if signature is valid, 0 if invalid, -1 on error
+ * @param msg ZKVM_SECP256K1_HASH_LEN-byte message hash
+ * @param sig ZKVM_SECP256K1_SIG_LEN-byte signature (r || s)
+ * @param pubkey ZKVM_SECP256K1_PUBKEY_LEN-byte uncompressed public key (x || y)
+ * @return ZKVM_SUCCESS if signature is valid, ZKVM_VERIFY_FAILURE if invalid, ZKVM_ERROR on error
  */
-int zkvm_secp256k1_verify(const uint8_t msg[32],
-                          const uint8_t sig[64],
-                          const uint8_t pubkey[64]);
+zkvm_status zkvm_secp256k1_verify(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
+                                  const uint8_t sig[ZKVM_SECP256K1_SIG_LEN],
+                                  const uint8_t pubkey[ZKVM_SECP256K1_PUBKEY_LEN]);
 
 /* ============================================================================
  * Ethereum Precompiles
