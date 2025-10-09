@@ -38,19 +38,21 @@ void zkvm_keccak256(const uint8_t* data, size_t len, uint8_t output[32]);
 /**
  * ECRECOVER - Recover public key from signature (Precompile 0x01)
  *
- * Implements Ethereum's ecrecover precompile for secp256k1 signature recovery.
- * Note: Returns 32-byte public key hash (last 20 bytes = address).
+ * Implements ecrecover precompile for secp256k1 signature recovery.
+ * Note: The function as defined on the Ethereum layer returns an address.
+ * We return a public key and the user will need to call Keccak manually. 
+ * 
  *
  * @param msg 32-byte message hash
  * @param sig 64-byte signature (r || s)
  * @param recid Recovery ID
- * @param[out] output Pointer to 32-byte output buffer (Keccak256 of pubkey)
+ * @param[out] output Pointer to 64-byte output buffer (public key)
  * @return 0 on success, -1 on error
  */
 int zkvm_secp256k1_ecrecover(const uint8_t msg[32],
                              const uint8_t sig[64],
                              uint8_t recid,
-                             uint8_t output[32]);
+                             uint8_t output[64]);
 
 /**
  * Compute SHA-256 hash (Precompile 0x02)
