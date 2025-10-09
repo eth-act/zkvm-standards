@@ -66,10 +66,9 @@ void zkvm_sha256(const uint8_t* data, size_t len, uint8_t output[32]);
  *
  * @param data Pointer to input data
  * @param len Length of input data in bytes
- * @param output Pointer to 32-byte output buffer (20 bytes used, left-padded with zeros)
- TODO: Should we just return 20 bytes?
+ * @param output Pointer to 20-byte output buffer
  */
-void zkvm_ripemd160(const uint8_t* data, size_t len, uint8_t output[32]);
+void zkvm_ripemd160(const uint8_t* data, size_t len, uint8_t output[20]);
 
 /**
  * The Identity/datacopy function (Precompile 0x04) is not provided as it
