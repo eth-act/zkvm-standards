@@ -54,6 +54,10 @@ typedef enum {
 #define ZKVM_BN254_G1_POINT_LEN 64
 #define ZKVM_BN254_G2_POINT_LEN 128
 #define ZKVM_BN254_SCALAR_LEN 32
+#define ZKVM_BN254_PAIRING_PAIR_LEN (ZKVM_BN254_G1_POINT_LEN + ZKVM_BN254_G2_POINT_LEN)
+
+/* BN254 types */
+typedef uint8_t zkvm_bn254_pairing_pair[ZKVM_BN254_PAIRING_PAIR_LEN];
 
 /* BLS12-381 curve sizes */
 #define ZKVM_BLS12_381_G1_POINT_LEN 96
@@ -61,6 +65,14 @@ typedef enum {
 #define ZKVM_BLS12_381_SCALAR_LEN 32
 #define ZKVM_BLS12_381_FP_LEN 48
 #define ZKVM_BLS12_381_FP2_LEN 96
+#define ZKVM_BLS12_381_G1_MSM_PAIR_LEN (ZKVM_BLS12_381_G1_POINT_LEN + ZKVM_BLS12_381_SCALAR_LEN)
+#define ZKVM_BLS12_381_G2_MSM_PAIR_LEN (ZKVM_BLS12_381_G2_POINT_LEN + ZKVM_BLS12_381_SCALAR_LEN)
+#define ZKVM_BLS12_381_PAIRING_PAIR_LEN (ZKVM_BLS12_381_G1_POINT_LEN + ZKVM_BLS12_381_G2_POINT_LEN)
+
+/* BLS12-381 types */
+typedef uint8_t zkvm_bls12_381_g1_msm_pair[ZKVM_BLS12_381_G1_MSM_PAIR_LEN];
+typedef uint8_t zkvm_bls12_381_g2_msm_pair[ZKVM_BLS12_381_G2_MSM_PAIR_LEN];
+typedef uint8_t zkvm_bls12_381_pairing_pair[ZKVM_BLS12_381_PAIRING_PAIR_LEN];
 
 /* BLAKE2f sizes */
 #define ZKVM_BLAKE2F_STATE_LEN 64
@@ -196,11 +208,12 @@ zkvm_status zkvm_bn254_g1_mul(const uint8_t point[ZKVM_BN254_G1_POINT_LEN],
  *
  * Checks if the pairing equation holds for the given points.
  *
- * @param input Encoded input points (G1, G2 pairs: ZKVM_BN254_G1_POINT_LEN + ZKVM_BN254_G2_POINT_LEN bytes each)
- * @param input_len Length of input in bytes (must be multiple of ZKVM_BN254_G1_POINT_LEN + ZKVM_BN254_G2_POINT_LEN)
+ * @param pairs Encoded input points (ZKVM_BN254_PAIRING_PAIR_LEN bytes per pair)
+ * @param num_pairs Number of point pairs
  * @return ZKVM_SUCCESS if pairing check passes, ZKVM_VERIFY_FAILURE if pairing check fails, ZKVM_ERROR on error
  */
-zkvm_status zkvm_bn254_pairing(const uint8_t* input, const size_t input_len);
+zkvm_status zkvm_bn254_pairing(const zkvm_bn254_pairing_pair* pairs,
+                               const size_t num_pairs);
 
 /**
  * BLAKE2f compression function (Precompile 0x09, EIP-152)
@@ -255,12 +268,13 @@ zkvm_status zkvm_bls12_g1_add(const uint8_t p1[ZKVM_BLS12_381_G1_POINT_LEN],
 /**
  * BLS12-381 G1 multi-scalar multiplication (Precompile 0x0c, EIP-2537)
  *
- * @param pairs Interleaved points and scalars (ZKVM_BLS12_381_G1_POINT_LEN + ZKVM_BLS12_381_SCALAR_LEN bytes per pair)
+ * @param pairs Interleaved points and scalars (ZKVM_BLS12_381_G1_MSM_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point-scalar pairs
  * @param[out] result Output G1 point (ZKVM_BLS12_381_G1_POINT_LEN bytes)
  * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
  */
-zkvm_status zkvm_bls12_g1_msm(const uint8_t* pairs, const size_t num_pairs,
+zkvm_status zkvm_bls12_g1_msm(const zkvm_bls12_381_g1_msm_pair* pairs,
+                              const size_t num_pairs,
                               uint8_t result[ZKVM_BLS12_381_G1_POINT_LEN]);
 
 /**
@@ -278,22 +292,24 @@ zkvm_status zkvm_bls12_g2_add(const uint8_t p1[ZKVM_BLS12_381_G2_POINT_LEN],
 /**
  * BLS12-381 G2 multi-scalar multiplication (Precompile 0x0e, EIP-2537)
  *
- * @param pairs Interleaved points and scalars (ZKVM_BLS12_381_G2_POINT_LEN + ZKVM_BLS12_381_SCALAR_LEN bytes per pair)
+ * @param pairs Interleaved points and scalars (ZKVM_BLS12_381_G2_MSM_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point-scalar pairs
  * @param[out] result Output G2 point (ZKVM_BLS12_381_G2_POINT_LEN bytes)
  * @return ZKVM_SUCCESS on success, ZKVM_ERROR on error
  */
-zkvm_status zkvm_bls12_g2_msm(const uint8_t* pairs, const size_t num_pairs,
+zkvm_status zkvm_bls12_g2_msm(const zkvm_bls12_381_g2_msm_pair* pairs,
+                              const size_t num_pairs,
                               uint8_t result[ZKVM_BLS12_381_G2_POINT_LEN]);
 
 /**
  * BLS12-381 pairing check (Precompile 0x0f, EIP-2537)
  *
- * @param pairs G1 and G2 point pairs (ZKVM_BLS12_381_G1_POINT_LEN + ZKVM_BLS12_381_G2_POINT_LEN bytes per pair)
+ * @param pairs G1 and G2 point pairs (ZKVM_BLS12_381_PAIRING_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point pairs
  * @return ZKVM_SUCCESS if pairing check passes, ZKVM_VERIFY_FAILURE if pairing check fails, ZKVM_ERROR on error
  */
-zkvm_status zkvm_bls12_pairing(const uint8_t* pairs, const size_t num_pairs);
+zkvm_status zkvm_bls12_pairing(const zkvm_bls12_381_pairing_pair* pairs,
+                               const size_t num_pairs);
 
 /**
  * BLS12-381 map Fp to G1 (Precompile 0x10, EIP-2537)
