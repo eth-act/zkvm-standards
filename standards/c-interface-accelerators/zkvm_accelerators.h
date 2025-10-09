@@ -119,7 +119,9 @@ zkvm_status zkvm_secp256k1_verify(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
  * ============================================================================ */
 
 /**
- * ECRECOVER - Recover public key from signature (Precompile 0x01)
+ * ECRECOVER - Recover public key from signature
+ *
+ * Precompile: 0x01
  *
  * Implements ecrecover precompile for secp256k1 signature recovery.
  * Note: The function as defined on the Ethereum layer returns an address.
@@ -138,7 +140,9 @@ zkvm_status zkvm_secp256k1_ecrecover(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
                                      uint8_t output[ZKVM_SECP256K1_PUBKEY_LEN]);
 
 /**
- * Compute SHA-256 hash (Precompile 0x02)
+ * Compute SHA-256 hash
+ *
+ * Precompile: 0x02
  *
  * @param data Pointer to input data
  * @param len Length of input data in bytes
@@ -147,7 +151,9 @@ zkvm_status zkvm_secp256k1_ecrecover(const uint8_t msg[ZKVM_SECP256K1_HASH_LEN],
 void zkvm_sha256(const uint8_t* data, const size_t len, uint8_t output[ZKVM_HASH_SHA256_LEN]);
 
 /**
- * Compute RIPEMD-160 hash (Precompile 0x03)
+ * Compute RIPEMD-160 hash
+ *
+ * Precompile: 0x03
  *
  * @param data Pointer to input data
  * @param len Length of input data in bytes
@@ -156,12 +162,16 @@ void zkvm_sha256(const uint8_t* data, const size_t len, uint8_t output[ZKVM_HASH
 void zkvm_ripemd160(const uint8_t* data, const size_t len, uint8_t output[ZKVM_HASH_RIPEMD160_LEN]);
 
 /**
- * The Identity/datacopy function (Precompile 0x04) is not provided as it
-   can be implemented in the guest program efficiently.
+ * The Identity/datacopy function is not provided as it can be implemented
+ * in the guest program efficiently.
+ *
+ * Precompile: 0x04
  */
 
 /**
- * Modular exponentiation (Precompile 0x05)
+ * Modular exponentiation
+ *
+ * Precompile: 0x05
  *
  * Computes (base^exp) % modulus for arbitrary precision integers.
  *
@@ -180,7 +190,10 @@ zkvm_status zkvm_modexp(const uint8_t* base, const size_t base_len,
                         uint8_t* output);
 
 /**
- * BN254 G1 point addition (Precompile 0x06, EIP-196)
+ * BN254 G1 point addition
+ *
+ * Precompile: 0x06
+ * EIP-196
  *
  * @param p1 First point (ZKVM_BN254_G1_POINT_LEN bytes: x || y)
  * @param p2 Second point (ZKVM_BN254_G1_POINT_LEN bytes: x || y)
@@ -192,7 +205,10 @@ zkvm_status zkvm_bn254_g1_add(const uint8_t p1[ZKVM_BN254_G1_POINT_LEN],
                               uint8_t result[ZKVM_BN254_G1_POINT_LEN]);
 
 /**
- * BN254 G1 scalar multiplication (Precompile 0x07, EIP-196)
+ * BN254 G1 scalar multiplication
+ *
+ * Precompile: 0x07
+ * EIP-196
  *
  * @param point Input point (ZKVM_BN254_G1_POINT_LEN bytes: x || y)
  * @param scalar ZKVM_BN254_SCALAR_LEN-byte scalar
@@ -204,7 +220,10 @@ zkvm_status zkvm_bn254_g1_mul(const uint8_t point[ZKVM_BN254_G1_POINT_LEN],
                               uint8_t result[ZKVM_BN254_G1_POINT_LEN]);
 
 /**
- * BN254 pairing check (Precompile 0x08, EIP-197)
+ * BN254 pairing check
+ *
+ * Precompile: 0x08
+ * EIP-197
  *
  * Checks if the pairing equation holds for the given points.
  *
@@ -216,7 +235,10 @@ zkvm_status zkvm_bn254_pairing(const zkvm_bn254_pairing_pair* pairs,
                                const size_t num_pairs);
 
 /**
- * BLAKE2f compression function (Precompile 0x09, EIP-152)
+ * BLAKE2f compression function
+ *
+ * Precompile: 0x09
+ * EIP-152
  *
  * Implements the BLAKE2 compression function F.
  *
@@ -240,7 +262,10 @@ zkvm_status zkvm_blake2f(const uint32_t rounds,
                          const uint8_t f);
 
 /**
- * Point evaluation precompile (Precompile 0x0a, EIP-4844)
+ * Point evaluation precompile
+ *
+ * Precompile: 0x0a
+ * EIP-4844
  *
  * Verifies a KZG proof for point evaluation.
  *
@@ -256,7 +281,10 @@ zkvm_status zkvm_kzg_point_eval(const uint8_t commitment[ZKVM_KZG_COMMITMENT_LEN
                                 const uint8_t proof[ZKVM_KZG_PROOF_LEN]);
 
 /**
- * BLS12-381 G1 point addition (Precompile 0x0b, EIP-2537)
+ * BLS12-381 G1 point addition
+ *
+ * Precompile: 0x0b
+ * EIP-2537
  *
  * @param p1 First G1 point (ZKVM_BLS12_381_G1_POINT_LEN bytes: Fp x, Fp y)
  * @param p2 Second G1 point (ZKVM_BLS12_381_G1_POINT_LEN bytes: Fp x, Fp y)
@@ -268,7 +296,10 @@ zkvm_status zkvm_bls12_g1_add(const uint8_t p1[ZKVM_BLS12_381_G1_POINT_LEN],
                               uint8_t result[ZKVM_BLS12_381_G1_POINT_LEN]);
 
 /**
- * BLS12-381 G1 multi-scalar multiplication (Precompile 0x0c, EIP-2537)
+ * BLS12-381 G1 multi-scalar multiplication
+ *
+ * Precompile: 0x0c
+ * EIP-2537
  *
  * @param pairs Interleaved points and scalars (ZKVM_BLS12_381_G1_MSM_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point-scalar pairs
@@ -280,7 +311,10 @@ zkvm_status zkvm_bls12_g1_msm(const zkvm_bls12_381_g1_msm_pair* pairs,
                               uint8_t result[ZKVM_BLS12_381_G1_POINT_LEN]);
 
 /**
- * BLS12-381 G2 point addition (Precompile 0x0d, EIP-2537)
+ * BLS12-381 G2 point addition
+ *
+ * Precompile: 0x0d
+ * EIP-2537
  *
  * @param p1 First G2 point (ZKVM_BLS12_381_G2_POINT_LEN bytes: Fp2 x, Fp2 y)
  * @param p2 Second G2 point (ZKVM_BLS12_381_G2_POINT_LEN bytes: Fp2 x, Fp2 y)
@@ -292,7 +326,10 @@ zkvm_status zkvm_bls12_g2_add(const uint8_t p1[ZKVM_BLS12_381_G2_POINT_LEN],
                               uint8_t result[ZKVM_BLS12_381_G2_POINT_LEN]);
 
 /**
- * BLS12-381 G2 multi-scalar multiplication (Precompile 0x0e, EIP-2537)
+ * BLS12-381 G2 multi-scalar multiplication
+ *
+ * Precompile: 0x0e
+ * EIP-2537
  *
  * @param pairs Interleaved points and scalars (ZKVM_BLS12_381_G2_MSM_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point-scalar pairs
@@ -304,7 +341,10 @@ zkvm_status zkvm_bls12_g2_msm(const zkvm_bls12_381_g2_msm_pair* pairs,
                               uint8_t result[ZKVM_BLS12_381_G2_POINT_LEN]);
 
 /**
- * BLS12-381 pairing check (Precompile 0x0f, EIP-2537)
+ * BLS12-381 pairing check
+ *
+ * Precompile: 0x0f
+ * EIP-2537
  *
  * @param pairs G1 and G2 point pairs (ZKVM_BLS12_381_PAIRING_PAIR_LEN bytes per pair)
  * @param num_pairs Number of point pairs
@@ -314,7 +354,10 @@ zkvm_status zkvm_bls12_pairing(const zkvm_bls12_381_pairing_pair* pairs,
                                const size_t num_pairs);
 
 /**
- * BLS12-381 map Fp to G1 (Precompile 0x10, EIP-2537)
+ * BLS12-381 map Fp to G1
+ *
+ * Precompile: 0x10
+ * EIP-2537
  *
  * @param field_element ZKVM_BLS12_381_FP_LEN-byte Fp element
  * @param[out] result Output G1 point (ZKVM_BLS12_381_G1_POINT_LEN bytes)
@@ -324,7 +367,10 @@ zkvm_status zkvm_bls12_map_fp_to_g1(const uint8_t field_element[ZKVM_BLS12_381_F
                                     uint8_t result[ZKVM_BLS12_381_G1_POINT_LEN]);
 
 /**
- * BLS12-381 map Fp2 to G2 (Precompile 0x11, EIP-2537)
+ * BLS12-381 map Fp2 to G2
+ *
+ * Precompile: 0x11
+ * EIP-2537
  *
  * @param field_element ZKVM_BLS12_381_FP2_LEN-byte Fp2 element
  * @param[out] result Output G2 point (ZKVM_BLS12_381_G2_POINT_LEN bytes)
@@ -334,7 +380,10 @@ zkvm_status zkvm_bls12_map_fp2_to_g2(const uint8_t field_element[ZKVM_BLS12_381_
                                      uint8_t result[ZKVM_BLS12_381_G2_POINT_LEN]);
 
 /**
- * secp256r1 (P-256) signature verification (Precompile 0x100, EIP-7212)
+ * secp256r1 (P-256) signature verification
+ *
+ * Precompile: 0x100
+ * EIP-7212
  *
  * @param msg ZKVM_SECP256R1_HASH_LEN-byte message hash
  * @param sig ZKVM_SECP256R1_SIG_LEN-byte signature (r || s)
