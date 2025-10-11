@@ -6,6 +6,7 @@
  *
  * Note: Caller MUST ensure all pointers are valid. If a function is called
  *       with a NULL pointer, the function SHOULD panic.
+ * Note: The caller should allocate and free the input and output memory
  */
 
 #ifndef ZKVM_ACCELERATORS_H
