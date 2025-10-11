@@ -310,7 +310,7 @@ zkvm_status zkvm_bn254_pairing(const zkvm_bn254_pairing_pair* pairs,
  *
  * @remark The use of big-endian encoding for the rounds parameter matches the specification in EIP-152.
  */
-zkvm_status zkvm_blake2f(const uint32_t rounds,
+zkvm_status zkvm_blake2f(uint32_t rounds,
                          zkvm_blake2f_state* h,
                          const zkvm_blake2f_message* m,
                          const zkvm_blake2f_offset* t,
