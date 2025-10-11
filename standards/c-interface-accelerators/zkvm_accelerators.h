@@ -145,8 +145,9 @@ typedef zkvm_bytes_32 zkvm_kzg_field_element;
  * @param data Pointer to input data
  * @param len Length of input data in bytes
  * @param[out] output Pointer to output hash
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
-void zkvm_keccak256(const uint8_t* data, size_t len, zkvm_keccak256_hash* output);
+zkvm_status zkvm_keccak256(const uint8_t* data, size_t len, zkvm_keccak256_hash* output);
 
 /**
  * secp256k1 signature verification
@@ -200,8 +201,9 @@ zkvm_status zkvm_secp256k1_ecrecover(const zkvm_secp256k1_hash* msg,
  * @param data Pointer to input data
  * @param len Length of input data in bytes
  * @param[out] output Pointer to output hash
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
-void zkvm_sha256(const uint8_t* data, size_t len, zkvm_sha256_hash* output);
+zkvm_status zkvm_sha256(const uint8_t* data, size_t len, zkvm_sha256_hash* output);
 
 /**
  * Compute RIPEMD-160 hash
@@ -210,9 +212,10 @@ void zkvm_sha256(const uint8_t* data, size_t len, zkvm_sha256_hash* output);
  *
  * @param data Pointer to input data
  * @param len Length of input data in bytes
- * @param[out] output Pointer to output hash
+ * @param[out] output Pointer to output hash (20 bytes of hash, last 12 bytes zero-padded)
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
  */
-void zkvm_ripemd160(const uint8_t* data, size_t len, zkvm_ripemd160_hash* output);
+zkvm_status zkvm_ripemd160(const uint8_t* data, size_t len, zkvm_ripemd160_hash* output);
 
 /**
  * The Identity/datacopy function is not provided as it can be implemented
