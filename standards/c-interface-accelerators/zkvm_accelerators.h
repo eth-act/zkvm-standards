@@ -4,9 +4,18 @@
  * This header defines the standard C interface for guest programs to access
  * accelerators in zkVMs.
  *
- * Note: Caller MUST ensure all pointers are valid. If a function is called
- *       with a NULL pointer, the function SHOULD panic.
- * Note: The caller should allocate and free the input and output memory
+ * Design Notes:
+ * - All struct types are sized as multiples of 8 bytes (64-bit word alignment)
+ *   for efficient memory operations, as allocating word-aligned data is cheaper
+ *   in most zkVM implementations.
+ * - Some types (e.g., RIPEMD-160) are zero-padded to achieve this alignment.
+ *   Since the EVM also attempts to make all inputs aligned to 256-bits, one does
+ *   may not see a difference between the sizes needed for the EVM and the sizes needed here.
+ *
+ * Usage Notes:
+ * - Caller MUST ensure all pointers are valid. If a function is called
+ *   with a NULL pointer, the function SHOULD panic.
+ * - The caller SHOULD allocate and free the input and output memory.
  */
 
 #ifndef ZKVM_ACCELERATORS_H
@@ -45,10 +54,6 @@ typedef struct {
 } zkvm_bytes_16;
 
 typedef struct {
-    uint8_t data[20];
-} zkvm_bytes_20;
-
-typedef struct {
     uint8_t data[32];
 } zkvm_bytes_32;
 
@@ -75,7 +80,7 @@ typedef struct {
 /* Hash types */
 typedef zkvm_bytes_32 zkvm_keccak256_hash;
 typedef zkvm_bytes_32 zkvm_sha256_hash;
-typedef zkvm_bytes_20 zkvm_ripemd160_hash;
+typedef zkvm_bytes_32 zkvm_ripemd160_hash;  /* 20-byte hash padded to 32 bytes, last 12 bytes are zero */
 
 /* secp256k1 types */
 typedef zkvm_bytes_32 zkvm_secp256k1_hash;
