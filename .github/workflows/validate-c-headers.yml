@@ -1,0 +1,46 @@
+name: Validate C Headers
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        compiler: [gcc, clang, g++, clang++]
+        std: [c11, c17, c++11, c++17]
+        exclude:
+          - compiler: gcc
+            std: c++11
+          - compiler: gcc
+            std: c++17
+          - compiler: clang
+            std: c++11
+          - compiler: clang
+            std: c++17
+          - compiler: g++
+            std: c11
+          - compiler: g++
+            std: c17
+          - compiler: clang++
+            std: c11
+          - compiler: clang++
+            std: c17
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install compilers
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc g++ clang
+
+    - name: Validate c-interface-accelerators header
+      run: |
+        cd standards/c-interface-accelerators
+        ${{ matrix.compiler }} -c -Wall -Wextra -pedantic -std=${{ matrix.std }} zkvm_accelerators.h
