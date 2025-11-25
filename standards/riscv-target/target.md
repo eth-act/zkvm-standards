@@ -1,0 +1,48 @@
+# Standardizing a RISC-V target for Ethereum
+
+This proposal aims to standardize a RISC-V target triple for zkEVMs being used on Ethereum. We want to define the minimal target 
+
+Proposed target:
+
+```
+riscv64im-unknown-none-elf
+```
+
+## Motivation
+
+Different zkEVMs currently target different RISC-V triples, standardization helps to normalize benchmarks across different zkVMs with respects to the circuit being proven, focus formal verification efforts and reduce the long term complexity of auditing the circuits. 
+
+## Goals
+
+- Define a minimal RISC-V instruction set for zkEVMs that want to prove Ethereum blocks.
+
+
+## Non-Goals
+
+- Define a RISC-V instruction set for proving arbitrary general purpose programs
+- Not support every language directly
+- We are not defining a standard for other targets and the standardization of this target has no precedence on other targets. For example, one could envision WASM-WASI being a suitable target for WASM.
+
+
+| **Category**                  | **Proposed Setting**      | 
+| ----------------------------- | ------------------------- | 
+| **ISA Base**                  | `RV64I`                   |
+| **Extensions**                | `M`                       |
+| **Compressed (`C`)**          | *Excluded*                |
+| **Floating Point (`F`, `D`)** | *Excluded (soft-float)*   |
+| **Privileged Mode**           | Machine (`M`) only        |
+| **Syscalls / Environment**    | None                      |
+| **ABI**                       | `LP64` (soft-float)       |
+| **Object Format**             | ELF, statically linked    |
+| **Endianness**                | Little-endian             |
+| **Memory Model**              | Flat, no MMU, no paging   |
+
+## Rationale
+
+Since the execution layer's state transition function(STF) does not contain any floating point arithmetic, the minimal ISA requirements for proving the STF is RV32I. In practice, it is RV32IM because multiplications and divisions will be expensive otherwise.
+
+We use 64-bit since many of the algorithms used in the STF can take advantage of a 64-bit word size. For example, U256 integer arithmetic and keccak256.
+
+## zkVM precompiles
+
+Since zkVM precompiles are defined via a C interface, the implementation details of how a zkVM precompile is called does not need to be specified.
