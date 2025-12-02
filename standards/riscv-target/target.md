@@ -27,7 +27,7 @@ Different zkEVMs currently target different RISC-V triples, standardization help
 | **Category**                  | **Proposed Setting**      | 
 | ----------------------------- | ------------------------- | 
 | **ISA Base**                  | `RV64I`                   |
-| **Extensions**                | `M`                       |
+| **Extensions**                | `M`, `Zicclsm`            |
 | **Compressed (`C`)**          | *Excluded*                |
 | **Floating Point (`F`, `D`)** | *Excluded (soft-float)*   |
 | **Privileged Mode**           | Machine (`M`) only        |
@@ -42,6 +42,8 @@ Different zkEVMs currently target different RISC-V triples, standardization help
 Since the execution layer's state transition function(STF) does not contain any floating point arithmetic, the minimal ISA requirements for proving the STF is RV32I. In practice, it is RV32IM because multiplications and divisions will be expensive otherwise.
 
 We use 64-bit since many of the algorithms used in the STF can take advantage of a 64-bit word size. For example, U256 integer arithmetic and keccak256.
+
+`Zicclsm` extension is required. It says that misaligned loads and stores to main memory regions must be supported. Although unaligned memory accesses are uncommon in software one should account for the possibility of encountering them. All modern hardware architectures support unaligned memory accesses either in hardware or by OS emulation effectively handling such accesses transparently from the perspective of an application. zkVMs should not diverge in that regard from other platforms. By supporting unaligned memory accesses, zkVMs reduce the risk of compatibility issues where software compiles and runs correctly on conventional hardware but fails in the zkVM environment.
 
 ## zkVM precompiles
 
