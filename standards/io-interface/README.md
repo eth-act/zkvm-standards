@@ -8,7 +8,7 @@ The goal is to define a portable, efficient and convenient way to do IO in zkVMs
 
 # The interface
 
-The proposed interface consists of the following C function prototypes that are already part of libc:
+The proposed interface consists of the following C function prototypes that are part of libc:
 - `ssize_t read(int fd, void buf[.count], size_t count);`
 - `ssize_t write(int fd, const void buf[.count], size_t count);`
 - `off_t lseek(int fd, off_t offset, int whence);`
@@ -19,6 +19,8 @@ See libc documentation for semantics of these functions:
 - https://man7.org/linux/man-pages/man2/lseek.2.html
 
 It's assumed that file descriptor "0" corresponds to the input and file descriptor "1" corresponds to the output.
+
+Error conditions should be handled following the standard. E.g. when an invalid file descriptor is passed then a function should return -1 and set `errno` to `EBADF`.
 
 The support for `lseek` makes sense only for fd "0" and only on zkVMs that provide random access to the input. In other cases that function shall error out.
 
