@@ -13,7 +13,10 @@ The proposed interface consists of the following C function prototypes that are 
 - `ssize_t write(int fd, const void buf[.count], size_t count);`
 - `off_t lseek(int fd, off_t offset, int whence);`
 
-See libc documentation for semantics of these functions.
+See libc documentation for semantics of these functions:
+- https://man7.org/linux/man-pages/man2/read.2.html
+- https://man7.org/linux/man-pages/man2/write.2.html
+- https://man7.org/linux/man-pages/man2/lseek.2.html
 
 It's assumed that file descriptor "0" corresponds to the input and file descriptor "1" corresponds to the output.
 
