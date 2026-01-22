@@ -33,7 +33,7 @@ All high-level language mechanisms for abnormal termination should map to the st
 
 When a program terminates successfully:
 
-* The zkVM execution must halt immediately.
+* The zkVM execution must halt.
 * The execution trace must be considered complete and valid.
 * A valid proof may be generated for the execution.
 * The zkVM must report successful completion to the host environment.
@@ -44,7 +44,7 @@ Successful termination indicates that all program invariants were preserved and 
 
 When a program terminates due to abnormal conditions:
 
-* The zkVM execution must halt immediately.
+* The zkVM execution must halt.
 * The zkVM must report execution failure with the provided error code to the host environment.
 * The execution trace must either be unprovable (proof generation fails or is skipped) or the verification of the proof must fail.
 
@@ -66,9 +66,9 @@ Language runtimes and standard libraries must map abnormal termination mechanism
 
 This mapping must preserve failure semantics and ensure zkVM-level termination is triggered.
 
-## Recommended Implementation Mechanism for RISCV
+## Reference Implementation Mechanism for RISCV
 
-This specification recommends implementing termination using a reserved ECALL interface.
+This specification proposes implementing termination using a reserved ECALL interface. zkVMs may implement termination signaling differently.
 
 Termination is performed by invoking an ECALL with a standardized call number and passing an exit code indicating success or failure.
 
