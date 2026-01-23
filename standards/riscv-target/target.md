@@ -45,6 +45,8 @@ We use 64-bit since many of the algorithms used in the STF can take advantage of
 
 `Zicclsm` extension is required. It says that misaligned loads and stores to main memory regions must be supported. Although unaligned memory accesses are uncommon in software one should account for the possibility of encountering them. All modern hardware architectures support unaligned memory accesses either in hardware or by OS emulation effectively handling such accesses transparently from the perspective of an application. zkVMs should not diverge in that regard from other platforms. By supporting unaligned memory accesses, zkVMs reduce the risk of compatibility issues where software compiles and runs correctly on conventional hardware but fails in the zkVM environment.
 
+zkVMs must provide visibility into the number of unaligned memory accesses that occur during proof generation. This enables developers to monitor unaligned access patterns over time and investigate specific code blocks that trigger them. At minimum, zkVMs should expose a count of unaligned accesses per proof through command-line output or log files, though more granular metrics are encouraged. This observability helps identify potential optimization opportunities and verify that unaligned accesses remain rare as expected, while ensuring the safeguard is working correctly when edge cases do occur.
+
 ## zkVM precompiles
 
 Since zkVM precompiles are defined via a C interface, the implementation details of how a zkVM precompile is called does not need to be specified.
