@@ -26,8 +26,8 @@ zkVMs that don't preload input will need to read the entire input into an intern
 
 `write_output` may be called multiple times. The observable result of calling `write_output` multiple times is as if the buffers from successive calls were concatenated. Even if the total size of data passed to `write_output` is bigger than the zkVM's memory, `write_output` can still be implemented with online hashing under the hood. This function cannot fail, so no error code is returned.
 
-The `read_input` and `write_output` functions are independent of the libc IO interface. This proposal neither requires the presence of libc IO functions nor prescribes their behavior.
-
 # Rationale
 
 `read_input` enables zero-copy implementations for zkVMs that preload input into memory, which justifies the departure from the standard libc IO interface. This approach naturally precludes interactive input reading, though this limitation is not a concern for EF's use case.
+
+The `read_input` and `write_output` functions are independent of the libc IO interface. This proposal neither requires the presence of libc IO functions nor prescribes their behavior.
