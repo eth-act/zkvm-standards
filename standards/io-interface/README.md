@@ -24,7 +24,7 @@ After calling `read_input`, the `buf_ptr` variable contains a pointer to the inp
 
 zkVMs that don't preload input will need to read the entire input into an internal buffer during machine initialization to ensure `read_input` can be safely called from `main`. As a consequence, the size of the machine input must be smaller than the zkVM's addressable space.
 
-`write_output` may be called multiple times. The observable result of calling `write_output` multiple times is as if the buffers from successive calls were concatenated. Even if the total size of data passed to `write_output` is bigger than the zkVM's memory, `write_output` can still be implemented with online hashing under the hood. This function cannot fail, so no error code is returned.
+`write_output` may be called multiple times. The observable result of calling `write_output` multiple times is as if the buffers from successive calls were concatenated. Even if the total size of data passed to `write_output` is bigger than the zkVM's memory, `write_output` can still be implemented with incremental hashing under the hood. This function cannot fail, so no error code is returned. Theoretically, this allows writing an unbounded amount of data across multiple calls, more than the maximum value representable by `size_t`, although this is not a practical concern.
 
 # Rationale
 
