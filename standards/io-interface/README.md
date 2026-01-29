@@ -22,10 +22,12 @@ The `read_input` function is used as follows:
 
 After calling `read_input`, the `buf_ptr` variable contains a pointer to the input, and `buf_size` indicates its size. If `buf_size` is 0, then `buf_ptr` may contain an arbitrary value and should be considered invalid. The `read_input` function cannot fail, so no error code is returned. The type `const uint8_t*` for `buf_ptr` indicates that the memory area containing the input is read-only. This function has no side effects beyond setting the pointer parameters, may be called multiple times, and is idempotent.
 
+zkVMs that don't preload input will need to read the entire input into an internal buffer during machine initialization to ensure `read_input` can be safely called from `main`. As a consequence, the size of the machine input must be smaller than the zkVM's addressable space.
+
 `write_output` may be called multiple times. The program's output is the concatenation of buffers passed to successive calls to `write_output`. This function cannot fail, so no error code is returned.
 
 The `read_input` and `write_output` functions are independent of the libc IO interface. This proposal neither requires the presence of libc IO functions nor prescribes their behavior.
 
 # Rationale
 
-`read_input` enables zero-copy implementations for zkVMs that preload input into memory, which justifies the departure from the standard libc IO interface. As a consequence, zkVMs that don't preload input will need to read the entire input into an internal buffer during machine initialization to ensure `read_input` can be safely called from `main`. This approach naturally precludes interactive input reading, though this limitation is not a concern for EF's use case.
+`read_input` enables zero-copy implementations for zkVMs that preload input into memory, which justifies the departure from the standard libc IO interface. This approach naturally precludes interactive input reading, though this limitation is not a concern for EF's use case.
