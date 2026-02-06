@@ -5,7 +5,7 @@ This proposal aims to standardize a RISC-V target triple for zkEVMs being used o
 Proposed target:
 
 ```
-riscv64im-unknown-none-elf
+riscv64im_zicclsm-unknown-none-elf
 ```
 
 ## Motivation
