@@ -1,6 +1,6 @@
 # Execution Termination Semantics
 
-This proposal standardizes execution termination semantics for zero-knowledge virtual machines. The specification establishes common behavior for successful termination and abnormal termination routines such as `abort()` in C/C++, panics in Rust, and runtime faults in Go, enabling consistent proof generation behavior, improved developer experience, and stronger correctness and security guarantees.
+This proposal standardizes execution termination semantics for guest programs targeting zero-knowledge virtual machines. The specification establishes common behavior for successful termination and abnormal termination routines such as `abort()` in C/C++, panics in Rust, and runtime faults in Go, enabling consistent proof generation behavior, improved developer experience, and stronger correctness and security guarantees.
 
 All languages targeting zkVMs must use this termination mechanism for:
 
