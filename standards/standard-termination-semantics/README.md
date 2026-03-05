@@ -2,13 +2,6 @@
 
 This proposal standardizes execution termination semantics for guest programs targeting zero-knowledge virtual machines. The specification establishes common behavior for successful termination and abnormal termination routines such as `abort()` in C/C++, panics in Rust, and runtime faults in Go, enabling consistent proof verification behavior, improved developer experience, and stronger correctness and security guarantees.
 
-All languages targeting zkVMs must use this termination mechanism for:
-
-* Uncaught exceptions
-* Assertion failures
-* Runtime errors
-* Explicit termination requests
-
 ## Motivation
 
 Current zkVM implementations lack a standardized method for terminating execution and reporting success or failure status. This creates several issues:
