@@ -46,7 +46,7 @@ When a program terminates due to abnormal conditions:
 
 * The zkVM execution must halt.
 * The zkVM must report execution failure with the provided error code to the host environment.
-* The execution trace must either be unprovable (proof generation fails or is skipped) or the verification of the proof must fail.
+* The verification of the proof must fail - if the proof was created in the first place.
 
 Failed termination indicates that the program did not reach a valid completion state and must not be treated as a successful computation by the verifier.
 
