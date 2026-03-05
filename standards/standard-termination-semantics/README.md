@@ -39,7 +39,9 @@ When a program terminates due to abnormal conditions:
 
 * The zkVM execution must halt.
 * The zkVM must report execution failure with the provided error code to the host environment.
-* The verification of the proof must fail - if the proof was created in the first place.
+* The verifier must implement one of the following APIs:
+  * Type 1: Verification fails for any proof of a failed execution.
+  * Type 2: Verification accepts an expected exit code and can succeed if the proof represents an execution that terminated with that exact exit code, enabling proof-of-failure use cases.
 
 Failed termination indicates that the program did not reach a valid completion state and must not be treated as a successful computation by the verifier.
 
