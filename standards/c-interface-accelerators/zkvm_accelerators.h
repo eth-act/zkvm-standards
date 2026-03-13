@@ -50,31 +50,31 @@ typedef enum {
 
 /* Common byte array types */
 typedef struct {
-    uint8_t data[16];
+    uint64_t data[2];
 } zkvm_bytes_16;
 
 typedef struct {
-    uint8_t data[32];
+    uint64_t data[4];
 } zkvm_bytes_32;
 
 typedef struct {
-    uint8_t data[48];
+    uint64_t data[6];
 } zkvm_bytes_48;
 
 typedef struct {
-    uint8_t data[64];
+    uint64_t data[8];
 } zkvm_bytes_64;
 
 typedef struct {
-    uint8_t data[96];
+    uint64_t data[12];
 } zkvm_bytes_96;
 
 typedef struct {
-    uint8_t data[128];
+    uint64_t data[16];
 } zkvm_bytes_128;
 
 typedef struct {
-    uint8_t data[192];
+    uint64_t data[24];
 } zkvm_bytes_192;
 
 /* Hash types */
