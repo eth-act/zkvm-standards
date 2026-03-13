@@ -48,33 +48,49 @@ typedef enum {
  * Type definitions
  * ============================================================================ */
 
+#ifdef __cplusplus
+  #if __cplusplus >= 201103L
+    #define ALIGN8 alignas(8)
+  #else
+    #error "C++11 or later required for alignment support"
+  #endif
+#elif defined(__STDC_VERSION__)
+  #if __STDC_VERSION__ >= 201112L
+    #define ALIGN8 _Alignas(8)
+  #else
+    #error "C11 or later required for alignment support"
+  #endif
+#else
+  #error "Cannot determine language standard; C11 or C++11 required"
+#endif
+
 /* Common byte array types */
 typedef struct {
-    uint64_t data[2];
+    ALIGN8 uint8_t data[16];
 } zkvm_bytes_16;
 
 typedef struct {
-    uint64_t data[4];
+    ALIGN8 uint8_t data[32];
 } zkvm_bytes_32;
 
 typedef struct {
-    uint64_t data[6];
+    ALIGN8 uint8_t data[48];
 } zkvm_bytes_48;
 
 typedef struct {
-    uint64_t data[8];
+    ALIGN8 uint8_t data[64];
 } zkvm_bytes_64;
 
 typedef struct {
-    uint64_t data[12];
+    ALIGN8 uint8_t data[96];
 } zkvm_bytes_96;
 
 typedef struct {
-    uint64_t data[16];
+    ALIGN8 uint8_t data[128];
 } zkvm_bytes_128;
 
 typedef struct {
-    uint64_t data[24];
+    ALIGN8 uint8_t data[192];
 } zkvm_bytes_192;
 
 /* Hash types */
