@@ -45,6 +45,15 @@ When a program terminates due to abnormal conditions:
 
 Failed termination indicates that the program did not reach a valid completion state and must not be treated as a successful computation by the verifier.
 
+### Application Entry Point Return Value
+
+As defined in the [Static Library and Linker Script Standard](../guest-program-runtime/README.md), `_start` calls an application-provided entry point function and captures its return value. That function is compatible with the `main` function from the C standard. When it returns:
+
+* A return value of `0` must be treated as successful termination.
+* A non-zero return value must be treated as abnormal termination, with the return value used as the error code.
+
+`_start` is responsible for mapping this return value to the appropriate zkVM termination mechanism.
+
 ### Mapping Language-Level Failures
 
 Language runtimes and standard libraries must map abnormal termination mechanisms to this standardized interface, including but not limited to:
