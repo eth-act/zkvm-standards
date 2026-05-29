@@ -1,0 +1,8 @@
+[package]
+name = "zkvm-interface"
+version = "0.1.0"
+edition = "2021"
+publish = false  # headers live outside crate dir; git-only distribution
+
+[build-dependencies]
+bindgen = "0.72"

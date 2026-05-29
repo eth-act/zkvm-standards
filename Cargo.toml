@@ -1,0 +1,3 @@
+[workspace]
+members = ["code/zkvm_interface"]
+resolver = "2"
