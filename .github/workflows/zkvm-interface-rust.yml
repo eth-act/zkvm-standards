@@ -1,0 +1,38 @@
+name: zkvm-interface Rust
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust nightly
+      uses: dtolnay/rust-toolchain@nightly
+      with:
+        components: rust-src
+
+    - name: Build for riscv64im-unknown-none-elf
+      working-directory: code/zkvm_interface
+      run: cargo +nightly build --release --target riscv64im-unknown-none-elf -Z build-std=core
+
+  fmt:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust nightly
+      uses: dtolnay/rust-toolchain@nightly
+      with:
+        components: rustfmt
+
+    - name: Check formatting
+      working-directory: code/zkvm_interface
+      run: cargo +nightly fmt --check
