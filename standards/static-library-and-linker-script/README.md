@@ -26,14 +26,15 @@ The library filename is not standardized.
 
 The linker script must set the ELF entry point to `_start`. `_start` is the first code executed by the zkVM. As its very first action — before any stack, global pointer, or BSS setup — `_start` invokes the `__pre_start` hook (see [Early Entry Hook](#early-entry-hook-__pre_start)), which a guest program may override.
 
-`_start` must perform all machine initialization required before C code can execute. On RISC-V this typically includes, but is not limited to:
+`_start` must perform all machine initialization required before C/C++ code can execute. On RISC-V this typically includes, but is not limited to:
 
 - Initializing the stack pointer.
 - Initializing the global pointer (`gp` register) for relaxation-based global data access.
 - Zeroing the BSS segment (see [BSS Zeroing](#bss-zeroing)).
 - Performing any IO interface initialization required by the vendor implementation so that `read_input` and `write_output` are usable when `main` is entered.
+- Invoking C++ static constructors and destructors.
 
-The exact set of initialization steps is vendor-defined. Only the observable post-conditions (zeroed BSS, usable IO interface, valid stack and `gp`) are mandated.
+The exact set of initialization steps is vendor-defined. Only the observable post-conditions are mandated.
 
 After initialization, `_start` must call `main` and pass its return value to the zkVM termination mechanism. The termination mechanism is vendor-specific; `_start` does not return to a caller.
 
@@ -71,7 +72,9 @@ _start:
 .option norelax
     la   gp, __global_pointer$
 .option pop
-    # zero .bss, perform vendor machine init, then call main()
+    # zero .bss, perform vendor machine init, call static constructors
+    # call main()
+    # call static destructors, handle main return code
 
     .weak __pre_start          # default: resume immediately
 __pre_start:
@@ -126,6 +129,6 @@ BSS boundaries, stack top, and global pointer anchor are all consumed solely by 
 
 Both forms are valid C. The `argc`/`argv` form exists to receive command-line arguments from the host OS, a concept that does not apply to zkVMs. Mandating `int main(void)` avoids the question of how `_start` would construct `argc`/`argv`, keeps the runtime simpler, and makes the constraint explicit.
 
-### C++ support is out of scope
+### C++ support
 
-Supporting C++ requires invoking static constructors before `main` (via `.init_array` / `.ctors`) and optionally static destructors after it (via `.fini_array` / `.dtors`). This is separable from the core initialization defined here and is deferred to a future standard. Vendors may support C++ as an extension, but guest programs requiring C++ must not assume cross-vendor portability until that standard exists.
+C++ static constructors and destructors are supported. `_start` invokes all static constructors before calling `main` and all static destructors after `main` returns. No additional vendor or application work is required to use C++ in guest programs.
