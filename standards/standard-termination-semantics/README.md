@@ -47,12 +47,12 @@ Failed termination indicates that the program did not reach a valid completion s
 
 ### Application Entry Point Return Value
 
-As defined in the [Static Library and Linker Script Standard](../guest-program-runtime/README.md), `_start` calls an application-provided entry point function and captures its return value. That function is compatible with the `main` function from the C standard. When it returns:
+As defined in the [Static Library and Linker Script Standard](../static-library-and-linker-script/README.md), `_start` calls an application-provided entry point — the `main` symbol — and captures its return value. This is an ABI contract: the `main` entry point is called under the C calling convention and returns a C `int` exit code. When the entry point returns:
 
 * A return value of `0` must be treated as successful termination.
 * A non-zero return value must be treated as abnormal termination, with the return value used as the error code.
 
-`_start` is responsible for mapping this return value to the appropriate zkVM termination mechanism.
+`_start` is responsible for mapping this return value to the appropriate zkVM termination mechanism. Only the distinction between zero and non-zero is mandated; the range of error codes a zkVM preserves is vendor-defined.
 
 ### Mapping Language-Level Failures
 

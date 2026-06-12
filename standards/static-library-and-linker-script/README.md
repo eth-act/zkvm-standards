@@ -83,7 +83,7 @@ __pre_start:
 
 ### `main` Contract
 
-`_start` calls `main` using the standard C calling convention. The `main` symbol must be provided by the application and must have the following C signature:
+This contract defines an **ABI boundary** between the vendor-provided `_start` and the application. The application must provide a symbol named `main` that `_start` can call using the standard C calling convention, with the following ABI:
 
 ```c
 int main(void);
@@ -125,9 +125,11 @@ All other symbols exported by the linker script (BSS boundaries, stack boundarie
 
 BSS boundaries, stack top, and global pointer anchor are all consumed solely by `_start`, which the vendor writes. There is no need to standardize their names across vendors. The heap boundary symbols are different: they are consumed by application code (a custom allocator), so they must have agreed-upon names.
 
-### `int main(void)` rather than `int main(int argc, char *argv[])`
+### `int main(void)` as an ABI, not a C signature
 
-Both forms are valid C. The `argc`/`argv` form exists to receive command-line arguments from the host OS, a concept that does not apply to zkVMs. Mandating `int main(void)` avoids the question of how `_start` would construct `argc`/`argv`, keeps the runtime simpler, and makes the constraint explicit.
+Both `int main(void)` and the `argc`/`argv` form are valid C, but command-line arguments do not apply to zkVMs, so the no-argument form is mandated: it avoids the question of how `_start` would construct `argc`/`argv` and keeps the contract explicit.
+
+The `int main(void)` notation denotes a linkable symbol, not a requirement to write C. An integer return under the C ABI is the universal lowering that every language's termination model already collapses to (Rust's `Termination`/`ExitCode` on `std` targets, C/C++'s `int`, a Go exit status), so specifying the boundary as an ABI lets unmodified C/C++ work directly while every other language reaches it through its normal runtime adapter.
 
 ### C++ support
 
