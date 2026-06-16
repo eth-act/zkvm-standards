@@ -15,16 +15,15 @@ This standard specifies what that library must contain and what the accompanying
 Each zkVM vendor must provide a static library (`.a` archive) targeting their zkVM. The library must include implementations of:
 
 1. The `_start` function — the machine entry point (see [Entry Point and Initialization](#entry-point-and-initialization)).
-2. A weak default `__pre_start` hook (see [Early Entry Hook](#early-entry-hook-__pre_start)). The default implementation resumes normal startup immediately; a guest program may override it with a strong definition.
-3. All functions defined in the [IO Interface Standard](../io-interface/README.md): `read_input` and `write_output`.
-4. All functions defined in the [Cryptographic Accelerators C Interface Standard](../c-interface-accelerators/README.md).
-5. Any additional interface functions required by future standards in this series.
+2. All functions defined in the [IO Interface Standard](../io-interface/README.md): `read_input` and `write_output`.
+3. All functions defined in the [Cryptographic Accelerators C Interface Standard](../c-interface-accelerators/README.md).
+4. Any additional interface functions required by future standards in this series.
 
 The library filename is not standardized.
 
 ### Entry Point and Initialization
 
-The linker script must set the ELF entry point to `_start`. `_start` is the first code executed by the zkVM. As its very first action — before any stack, global pointer, or BSS setup — `_start` invokes the `__pre_start` hook (see [Early Entry Hook](#early-entry-hook-__pre_start)), which a guest program may override.
+The linker script must set the ELF entry point to `_start`. `_start` is the first code executed by the zkVM.
 
 `_start` must perform all machine initialization required before C/C++ code can execute. On RISC-V this typically includes, but is not limited to:
 
@@ -37,49 +36,6 @@ The linker script must set the ELF entry point to `_start`. `_start` is the firs
 The exact set of initialization steps is vendor-defined. Only the observable post-conditions are mandated.
 
 After initialization, `_start` must call `main` and pass its return value to the zkVM termination mechanism. The termination mechanism is vendor-specific; `_start` does not return to a caller.
-
-### Early Entry Hook (`__pre_start`)
-
-`_start` invokes a hook named `__pre_start` as its very first action, before machine initialization. This gives guest programs a sanctioned point to run code early.
-
-The vendor static library must provide a **weak** default `__pre_start` that immediately resumes normal startup. A guest program may override it by defining a **strong** `__pre_start`; the linker selects the strong definition. Because the hook runs before any runtime setup, it is normally written in assembly.
-
-#### Calling convention
-
-`__pre_start` is **not** an ordinary C function, and the standard RISC-V calling convention does not apply. It is governed by the following contract:
-
-- **Entry.** `_start` transfers control with `jal ra, __pre_start` as the first instruction of startup. This is the first guest-controllable code to run.
-- **Resume address.** `ra` holds the *resume address*: the address of the normal startup code, which the vendor places immediately after the `jal` (so `ra` is automatically the instruction following the call). To continue normal startup, the hook returns with `ret`.
-- **Takeover.** To bypass normal startup entirely, the hook does not return; it assumes full ownership of the machine (for example, restoring a snapshot and jumping to a saved program counter).
-- **Registers.** All general-purpose registers other than `ra` are undefined on entry. Because `ra` is caller-saved, a hook that performs internal calls must preserve the resume address itself — for example by moving it into a callee-saved register — and restore it before `ret`.
-- **Stack.** No stack is provided; `sp` is undefined.
-- **Global pointer.** `gp` is undefined.
-- **Memory.** This standard does not specify the contents or initialization state of memory when `__pre_start` runs; that depends on the zkVM's program-loading model, which is left to a future standard. A portable hook must not assume any particular memory state, and any hook that relies on specific memory contents — such as data baked into the program image — is therefore vendor-specific. A hook that resumes normal startup must not disturb state that the vendor's `_start` relies on.
-
-If the long-call distance between `_start` and an overriding `__pre_start` exceeds the range of `jal`, the linker relaxes it to an `auipc`/`jalr` sequence. This preserves the contract: `ra` still points at the instruction following the call, i.e. the resume address.
-
-#### Reference implementation
-
-Vendor-provided `_start` and default `__pre_start`, in the static library:
-
-```asm
-    .globl _start
-_start:
-    jal  ra, __pre_start     # ra <- resume address (the instruction after this jal)
-    # --- resume point: normal startup begins here ---
-    la   sp, _stack_top
-.option push
-.option norelax
-    la   gp, __global_pointer$
-.option pop
-    # zero .bss, perform vendor machine init, call static constructors
-    # call main()
-    # call static destructors, handle main return code
-
-    .weak __pre_start          # default: resume immediately
-__pre_start:
-    ret
-```
 
 ### `main` Contract
 
