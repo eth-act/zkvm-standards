@@ -67,7 +67,7 @@ For each `PT_LOAD` segment, with file offset `p_offset`, virtual address `p_vadd
 
 The following constraints apply across segments:
 
-- **Alignment.** `p_vaddr` is aligned as required by the target (at minimum 4-byte aligned for the instruction word). Misaligned segments are rejected.
+- **Alignment.** `p_vaddr` is aligned as required by the target. Misaligned segments are rejected.
 - **No overlap.** Loadable segments must not overlap in virtual address space. A loader rejects overlapping `PT_LOAD` segments rather than resolving the overlap by precedence or accumulation. A normally linked ELF never contains overlapping loadable segments, so this check exists to catch malformed input and — the realistic case — collisions when a zkVM composes the guest with additional payloads (below).
 - **Order independence.** Because loadable segments are disjoint, the resulting image does not depend on the order in which program headers appear in the file: a loader that processes segments in header order produces the same image as one that sorts by `p_vaddr`.
 
