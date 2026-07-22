@@ -41,6 +41,8 @@ A **conforming emulator** is the component of a zkVM that executes a loaded gues
 
 The **proving cost metric** (`C`) is a single non-negative scalar, expressed in the zkVM's own **cost unit**, that the emulator reports for an execution as its estimate of the proving work that execution would require. Its numerical value is meaningful only relative to other values produced by the same zkVM under the same cost-model version.
 
+A **cost scope** is a region of execution a guest program delimits with a matched pair of markers, so that the emulator can attribute a portion of the proving cost metric to that region. Cost scopes are an optional capability (see [Cost attribution scopes](#cost-attribution-scopes-optional)).
+
 ## Specification
 
 ### The emulator exposes the proving cost metric
@@ -80,6 +82,30 @@ A zkVM should document any way in which the metric departs from a smooth linear 
 
 These disclosures do not weaken the metric's contract; they define the resolution at which it holds.
 
+### Cost attribution scopes (optional)
+
+The metric is a single number for a whole execution; to optimize, a developer needs to know *which parts* of the program are responsible for it. A zkVM **may** support **cost scopes**: source-level markers a guest program emits to bracket regions of execution, which the emulator uses to attribute the metric to those regions. Support is optional. A zkVM that offers this capability, however, has to expose it through the interface below and obey the semantics that follow, so that a guest program instrumented once is portable across conforming zkVMs that support scopes — the metric is not portable between zkVMs, but the instrumentation is.
+
+A guest program delimits a scope with a matched pair of calls:
+
+```c
+// Open a cost scope identified by `scope`.
+void zkvm_cost_scope_start(uint8_t scope);
+
+// Close the innermost open cost scope, whose identifier must equal `scope`.
+void zkvm_cost_scope_end(uint8_t scope);
+```
+
+The identifier is an 8-bit integer chosen by the developer; it names a region — `"trie verification"`, `"one hash round"` — whose meaning is the developer's, not the zkVM's. A zkVM that supports scopes has to satisfy:
+
+- **Inertness.** The calls must not change the program's observable behavior, and must not change `C`. They are directives to the emulator's cost accounting only; a proving build may compile them away entirely. A developer must be able to add or remove scope markers without altering the number they are trying to measure — a marker that itself cost something would distort the very attribution it exists to provide.
+- **Stack discipline.** Open scopes form a stack: `start` pushes its identifier, `end` pops the top, and the identifier passed to `end` has to equal the identifier currently on top. A program that closes scopes out of order — overlapping, improperly nested intervals — does not conform, and the emulator's behavior on it is undefined. The same identifier may appear at more than one stack depth, so a recursive or re-entered region may open the same scope again before the outer instance closes.
+- **Inclusive attribution.** The cost attributed to a scope is the total execution-dependent cost accrued between its `start` and its matching `end`, including the cost of any scopes nested within it and of any functions it calls. A region's *self* cost — excluding nested scopes — is recoverable by subtracting the costs of its immediate children.
+- **Reconciliation with the metric.** Only the execution-dependent part of the metric is attributable to a region of execution; the fixed part (see [How the metric can be computed](#how-the-metric-can-be-computed)) belongs to no interval and is reported separately, not folded into any scope. Cost accrued while no scope is open is likewise counted toward the execution but attributed to no scope. All attributed costs are expressed in the same cost unit as `C`.
+- **Determinism.** As with the metric itself, the attribution is a deterministic function of the program and its input; the cost reported for a scope does not depend on the host or on timing.
+
+How the emulator surfaces the attribution — per identifier, per scope instance, aggregated or as a call tree — is vendor-defined, as is the mechanism by which a marker reaches the emulator (for example a reserved syscall; see [I/O Interface](../io-interface/README.md)).
+
 ## Rationale
 
 ### How the metric can be computed
@@ -92,7 +118,7 @@ zkVMs based on STARKs already have an internal notion of this cost. Proving work
 C = base + Σ wᵢ · xᵢ
 ```
 
-where `base` is the fixed cost the prover pays regardless of the execution (for example committing to fixed ROM and lookup tables). The emulator accumulates the counts `x` as it runs and evaluates this sum: it is a weighted trace-area total, computable without proving, and proportional to the dominant term of proving work. Existing implementations already compute such a number — ZisK, for example, exposes it through its `-X`/`-S` emulator flags.
+where `base` is the fixed cost the prover pays regardless of the execution (for example committing to fixed ROM and lookup tables). The emulator accumulates the counts `x` as it runs and evaluates this sum: it is a weighted trace-area total, computable without proving, and proportional to the dominant term of proving work.
 
 For the weighted sum to track proving cost as closely across the prover's hardware as it does on the machine it was tuned on, each weight should reflect the *full* per-unit proving cost of its resource — trace commitment, constraint evaluation, and any lookup or permutation argument the resource drives — not merely a raw cell count (see [Why a single cost model holds across hardware](#why-a-single-cost-model-holds-across-hardware)).
 
@@ -119,4 +145,10 @@ Making one zkVM's cost comparable to another's would require collapsing away exa
 
 ### Relationship to profiling
 
-The additivity of the metric is what makes cost attribution possible: because the cost of an execution is the sum of the costs of its parts, an emulator that also reads the program's symbols (as ZisK does under `-S`) can attribute cost to functions or regions of interest and rank them, pointing a developer at the code responsible for the most proving cost. This standard defines the scalar; the attribution of that scalar to source-level regions is a natural and encouraged extension, but is not mandated here.
+The additivity of the metric is what makes cost attribution possible: because the cost of an execution is the sum of the costs of its parts, an emulator can report not just the total but where it accrued. Two forms of attribution are complementary. **Symbol-based** attribution is automatic — an emulator that reads the program's symbols maps cost back to functions and ranks them, with no change to the source. **Scope-based** attribution ([Cost attribution scopes](#cost-attribution-scopes-optional)) is explicit — the developer brackets regions of interest and the emulator attributes cost to them.
+
+Scopes complement symbols in the cases where symbols are weakest. Compiler transformations — inlining, link-time optimization, monomorphization — dissolve the function boundaries that symbol-based attribution depends on, so the region a developer cares about may no longer exist as a symbol; an explicit scope survives, because it is anchored in the source rather than the compiled layout. Scopes also express regions that are not functions at all — one iteration of a loop, a phase that spans several calls — and give them stable identifiers a developer can diff across program versions. The cost is that scopes require instrumentation and proper nesting, whereas symbol attribution is free. Most developers use both: symbols to find the hot function, scopes to dissect it.
+
+One caveat carries over from [quantization](#determinism-quantization-and-the-limits-of-prediction): a scope reports the cost *accrued* in its interval, which — where the prover quantizes cost at segment boundaries — is not necessarily the cost that would be *saved* by removing the region. Attribution localizes cost; it does not by itself predict the marginal effect of a change.
+
+Both forms of attribution are optional. This standard mandates only the scalar `C`; where a zkVM offers scope-based attribution, the interface and semantics in [Cost attribution scopes](#cost-attribution-scopes-optional) make instrumented guest code portable across the zkVMs that support it.
