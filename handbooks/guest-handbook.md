@@ -37,6 +37,6 @@ The ELF build for running in zkVMs should be the output of a public, fully open-
 The guest program teams must publish final ELFs with proper signatures for the ELF and the Verification Keys. The zkEVM team will facilitate in [ere-guests](https://github.com/eth-act/ere-guests) some scripts/tools to do the final linking against target zkEVMs which provide libraries for [zkevm-standards](https://github.com/eth-act/zkevm-standards/tree/main/standards).
 
 The ELF expected naming must be: `stateless-validator-<guestName>-<zkVMName>-<zkVMVersion>.elf`
-The VK expected naming must be: `stateless-validator-<guestName>-<zkVMName>-<zkVMVersion>.vk` (more documentation about how to generate this soon!)
+The VK expected naming must be: `stateless-validator-<guestName>-<zkVMName>-<zkVMVersion>.vk` (refer to [this document](https://github.com/eth-act/ere/blob/master/docs/vk-generation.md).)
 
 In `ere-guests`, we might republish ELFs of many guest program repos verbatim, just to have a hub of all ELFs targeted for 8025. But as mentioned, no real linking, re-signing or similar will be done; the source of truth for ELFs is always the guest program teams' repository releases.
