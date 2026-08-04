@@ -25,11 +25,11 @@ requirements, which are further described in subsequent sections.
    precisely, preference is given to zkVMs maintained by established execution-layer teams or
    credible working groups
 
-## Formal Methods Requirements
+## Formal Verification Requirements
 
 The use of formal verification for the prevention of circuit-correctness bugs has been proven
-effective in recent efforts targeting SP1, OpenVM, Pico, and ZisK. Specific coverage expectations
-will be published later.
+effective in recent efforts targeting [SP1](https://github.com/succinctlabs/sp1-lean), [OpenVM](https://github.com/openvm-org/openvm-fv), [Pico](https://github.com/NethermindEth/pico-fv), and [ZisK](https://github.com/eth-act/zisk-fv).
+Specific coverage expectations will be published later.
 
 ## The Reference Cluster
 
