@@ -40,8 +40,12 @@ When a program terminates due to abnormal conditions:
 * The zkVM execution must halt.
 * The zkVM must report execution failure with the provided error code to the host environment.
 * The verifier must implement one of the following APIs:
-  * Type 1: Verification fails for any proof of a failed execution.
-  * Type 2: Verification accepts an expected exit code and can succeed if the proof represents an execution that terminated with that exact exit code, enabling proof-of-failure use cases.
+  * Type 1: If an execution failed, then any proof claiming to attest to that execution must fail verification, regardless of whether it was produced by an honest or a malicious prover.
+  * Type 2: Verification accepts an expected exit code and can succeed only if the proof represents an execution that terminated with that exact exit code, enabling proof-of-failure use cases.
+
+This requirement constrains the verification stage only. It is a soundness property: the system must be constructed — in practice, enforced by the circuit — such that no proof of a failed execution can verify as a successful (Type 1) or differently-coded (Type 2) outcome. It is not satisfied by relying on the prover to refuse to produce a proof for a failed execution. An adversarial prover controls its own software and may attempt to forge such a proof, and the guarantee must hold against any proof anyone presents.
+
+An honest prover may surface a failed execution either by declining to produce a proof or, under a Type 2 verifier, by producing a proof-of-failure; that choice does not affect conformance, which depends only on whether a forged proof of a failed execution can pass verification.
 
 Failed termination indicates that the program did not reach a valid completion state and must not be treated as a successful computation by the verifier.
 
