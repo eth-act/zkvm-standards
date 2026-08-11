@@ -177,6 +177,12 @@ Letting an identifier nest inside itself would leave a per-identifier total unde
 
 The restriction gives up little, because the pattern it forbids is already the wrong instrumentation. A developer asking what a recursive traversal costs wants the cost of the whole traversal, which is what bracketing the call that enters it measures; bracketing the recursive step instead yields either that same figure or a self cost that is harder to interpret. What the rule buys is early detection — a `start` whose matching `end` is missed on some path surfaces as a duplicate open at the next entry, reported at the marker responsible, instead of as silently misattributed cost.
 
+### Why `end` takes an identifier
+
+The identifier passed to `end` selects nothing: `end` closes the innermost open scope, which the emulator already knows. It is a consistency check, and it is what makes [instrumentation errors](#instrumentation-errors) detectable where they occur. Without it, a program that mispairs its markers but happens to balance the count of `start` and `end` calls — the usual result of a missed `end` on an early-return path — would empty its stack cleanly at termination and report attribution that is silently wrong. With it, the mismatch is caught at the marker responsible.
+
+The uniqueness rule sharpens this. Because the open stack holds distinct identifiers, any mispairing between scopes is a mismatch against the top of the stack, so every marker defect is reported either at the next `end` or as a scope left open at termination. The check costs nothing: markers are inert, and a proving build compiles them away.
+
 ### Why symbol-based attribution stays optional
 
 Symbol-based attribution is encouraged but not required, because it depends on symbols the ELF is not obliged to carry and needs no agreement between vendors to be useful. Scope-based attribution is required, because it is the only one of the two that is a *contract with the guest*: the markers appear in guest source, so a zkVM that did not support them would either turn portable instrumentation into a per-vendor `#ifdef` or leave the source failing to link. Requiring scopes is what makes an instrumented guest program build and profile unchanged on every conforming zkVM, and it costs a vendor little — the emulator already accumulates the counts additively, so attributing them to an open interval is bookkeeping rather than new machinery.
