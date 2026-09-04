@@ -4,7 +4,7 @@ This standard requires a zkVM to provide guests access to a cryptographically st
 
 ## Motivation
 
-@LukaszRozmej made the case for provers to provide a per-proof source of randomness as the solution to a particular security problem [here](https://github.com/ethereum/EIPs/pull/12289). The problem arises when a guest program uses hash maps whose keys are computed deterministically from the program inputs. In such a setting, an attacker can find a set of inputs leading to collisions in the hash map, opening the possibility of a simultaneous DoS attack on every prover running that guest.
+@LukaszRozmej made the case for provers to provide a per-proof construction source of randomness as the solution to a particular security problem [here](https://github.com/ethereum/EIPs/pull/12289). The problem arises when a guest program uses hash maps whose keys are computed deterministically from the program inputs. In such a setting, an attacker can find a set of inputs leading to collisions in the hash map, opening the possibility of a simultaneous DoS attack on every prover running that guest.
 
 A guest cannot draw its own randomness, because everything it reads is committed input. So every guest of a given version maps a given key to the same bucket indefinitely, and one colliding set found offline works against every prover.
 
