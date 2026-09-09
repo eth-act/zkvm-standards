@@ -166,6 +166,14 @@ typedef zkvm_bytes_32 zkvm_kzg_field_element;
 zkvm_status zkvm_keccak256(const uint8_t* data, size_t len, zkvm_keccak256_hash* output);
 
 /**
+ * Performs the Keccak-f[1600] permutation on the provided state in-place.
+ *
+ * @param[in,out] state Pointer to state array (25 uint64_t words)
+ * @return ZKVM_EOK on success, ZKVM_EFAIL on failure
+ */
+zkvm_status zkvm_keccak_f1600(uint64_t* state);
+
+/**
  * secp256k1 signature verification
  *
  * Verifies an ECDSA signature on the secp256k1 curve.
